@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace WpfApp1
 {
-    internal class ViewModel : INotifyPropertyChanged
+    public class ViewModel : INotifyPropertyChanged
     {
         private string _searchString;
         private string _filePath;
@@ -23,7 +23,9 @@ namespace WpfApp1
             _searchResult = string.Empty;
             SearchCommand = new DelegateCommand(
                 () => Search(),
-                () => string.IsNullOrEmpty(SearchString) && File.Exists(FilePath));
+                () => !string.IsNullOrEmpty(SearchString) && File.Exists(FilePath))
+                .ObservesProperty(() => SearchString)
+                .ObservesProperty(() => FilePath);
         }
 
         public string SearchString
@@ -33,8 +35,8 @@ namespace WpfApp1
             {
                 if(_searchString != value)
                 {
-                    NotifyPropertyChanged();
                     _searchString = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -46,8 +48,8 @@ namespace WpfApp1
             {
                 if (_filePath != value)
                 {
-                    NotifyPropertyChanged();
                     _filePath = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -59,22 +61,19 @@ namespace WpfApp1
             {
                 if(_searchResult != value)
                 {
-                    NotifyPropertyChanged();
                     _searchResult = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
 
-        public DelegateCommand SearchCommand { get; set; }
+        public DelegateCommand SearchCommand { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            if (PropertyChanged != null && propertyName != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void Search()

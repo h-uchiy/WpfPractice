@@ -25,13 +25,15 @@ namespace WpfApp1
             InitializeComponent();
         }
 
+        private ViewModel ViewModel => (ViewModel)DataContext;
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.FileName = ((ViewModel)DataContext).FilePath;
+            dlg.FileName = ViewModel.FilePath;
             dlg.Filter = "テキストファイル|*.txt";
             dlg.Multiselect = false;
-            dlg.FileOk += (_sende, _e) => this.filePath.Text = dlg.FileName;
+            dlg.FileOk += (_sende, _e) => ViewModel.FilePath = dlg.FileName;
             dlg.ShowDialog();
         }
     }
