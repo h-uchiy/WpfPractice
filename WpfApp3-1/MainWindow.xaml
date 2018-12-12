@@ -32,9 +32,18 @@
                  TextWrapping="Wrap" />
         <Button x:Name="filePathButton" Grid.Row="1" Grid.Column="2" Margin="3,3,3,3" Click="Button_Click" Content="..." />
         <Label Grid.Row="2" Grid.Column="0" Margin="3,3,3,3" HorizontalAlignment="Right" VerticalAlignment="Top" Content="検索結果" />
-        <TextBox Grid.Row="2" Grid.Column="1" Height="Auto" Margin="3,3,3,3" Padding="0,3,0,3" HorizontalAlignment="Stretch"
-                 VerticalAlignment="Stretch" IsEnabled="False" VerticalScrollBarVisibility="Auto"
-                 Text="{Binding SearchResult}"
-                 TextWrapping="WrapWithOverflow" />
+        <ListBox Grid.Row="2" Grid.Column="1" Height="Auto" Margin="3,3,3,3" Padding="0,3,0,3" HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch" IsEnabled="False"
+                 ItemsSource="{Binding SearchResult}" >
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type local:MatchedLine}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Path=LineNo}"/>
+                        <TextBlock Text="{Binding Path=LinePosition}"/>
+                        <TextBlock Text="{Binding Path=Line}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>

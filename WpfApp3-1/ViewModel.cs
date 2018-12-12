@@ -15,13 +15,13 @@ namespace WpfApp
     {
         private string _searchString;
         private string _filePath;
-        private string _searchResult;
+        private IEnumerable<MatchedLine> _searchResult;
 
         public ViewModel()
         {
             _searchString = "SearchString";
             _filePath = "FilePath";
-            _searchResult = string.Empty;
+            _searchResult = Enumerable.Empty<MatchedLine>();
             SearchCommand = new DelegateCommand(
                 () => Search(),
                 () => !string.IsNullOrEmpty(SearchString) && File.Exists(FilePath))
@@ -55,7 +55,7 @@ namespace WpfApp
             }
         }
 
-        public string SearchResult
+        public IEnumerable<MatchedLine> SearchResult
         {
             get => _searchResult;
             set
@@ -79,22 +79,28 @@ namespace WpfApp
 
         private void Search()
         {
-            IEnumerable<string> MatchedString()
+            this.SearchResult = MatchedLines;
+        }
+
+        private IEnumerable<MatchedLine> MatchedLines
+        {
+            get
             {
-                foreach(var line in File.ReadLines(this.FilePath))
+                int lineNo = 0;
+                foreach (var line in File.ReadLines(this.FilePath))
                 {
-                    if(Regex.IsMatch(line, this.SearchString))
+                    lineNo++;
+                    var m = Regex.Match(line, this.SearchString);
+                    if (m.Success)
                     {
-                        yield return line;
+                        yield return new MatchedLine(lineNo, m.Index, line);
                     }
                 }
             }
-
-            this.SearchResult = MatchedString().Aggregate((a, b) => a + "\n" + b);
         }
     }
 
-    class MatchedLine
+    public class MatchedLine
     {
         public MatchedLine(int lineNo, int linePosition, string line)
         {
@@ -103,8 +109,8 @@ namespace WpfApp
             Line = line;
         }
 
-        int LineNo { get; }
-        int LinePosition { get; }
-        string Line { get; }
+        public int LineNo { get; }
+        public int LinePosition { get; }
+        public string Line { get; }
     }
 }
