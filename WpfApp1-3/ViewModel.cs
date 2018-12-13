@@ -90,7 +90,7 @@ namespace WpfApp
                 }
             }
 
-            this.SearchResult = MatchedString().Aggregate((a, b) => a + "\n" + b);
+            this.SearchResult = MatchedString().Aggregate((a, b) => a + Environment.NewLine + b);
         }
     }
 
